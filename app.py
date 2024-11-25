@@ -19,7 +19,7 @@ stop_flag =False
 def callback(indata,frames,time,status):
     q.put(bytes(indata))
 
-def recognize(data, vectorizer, clf):
+def recognize(data,vectorizer,clf):
     '''
     Анализ распознанной речи
     '''
@@ -28,7 +28,7 @@ def recognize(data, vectorizer, clf):
     trg = words.TRIGGERS.intersection(data.split())
     if not trg:
         return
-
+    print("запуск")
     #удаляем имя бота из текста
     data.replace(list(trg)[0], '')
 
@@ -36,12 +36,15 @@ def recognize(data, vectorizer, clf):
     #сравниваем с вариантами, получая наиболее подходящий ответ
     text_vector = vectorizer.transform([data]).toarray()[0]
     answer = clf.predict([text_vector])[0]
+    print(answer)
 
     #получение имени функции из ответа из data_set
     func_name = answer.split()[0]
 
     #озвучка ответа из модели data_set
-    voice.speaker(answer.replace(func_name, ''))
+
+    voice.Voice(answer.replace(func_name, ''))
+   # voice.speaker(answer.replace(func_name, ''))
 
     #запуск функции из skills
     exec(func_name + '()')    
@@ -51,12 +54,11 @@ def main():
     Обучаем матрицу ИИ
     и постоянно слушаем микрофон
     '''
-    global stop_flag
-    print("запуск")
+    global stop_flag   
 
     #Обучение матрицы на data_set модели
-    vectoraizer =CountVectorizer()
-    vectors = vectoraizer.fit_transform(list(words.data_set.keys()))
+    vectorizer =CountVectorizer()
+    vectors = vectorizer.fit_transform(list(words.data_set.keys()))
 
     clf = LogisticRegression()
     clf.fit(vectors, list(words.data_set.values()))
@@ -67,18 +69,16 @@ def main():
     with sd.RawInputStream(samplerate=samplerate,blocksize=48000,device=device[0],dtype="int16",
                             channels=1,callback=callback):    
         rec= vosk.KaldiRecognizer(model,samplerate)
-        while not stop_flag:            
+        while True:            
             data = q.get()
-            if rec.AcceptWaveform(data):        
-                result= rec.Result()  # результат в формате json          
-                result_dict = json.loads(result)
-                text = result_dict.get("text", "")#из словоря извлекается по ключу "text"
-                                                # если ключа нет возвращается "" пустая строка
-                print((result_dict)['text'])
+            if rec.AcceptWaveform(data):                    
+                data = json.loads(rec.Result())["text"]
+            #    print(data)             
+                recognize(data,vectorizer,clf)
                 
-                if "стой" in text.lower():
-                    print("Команда 'stop' получена. Завершение программы.")
-                    stop_flag = True                     
+                # if "стой" in data.lower():
+                #     print("Команда 'stop' получена. Завершение программы.")
+                #     stop_flag = True                     
             # else:
             #     partial = rec.PartialResult()  # Промежуточный результат в формате JSON
             #     print(partial)    
