@@ -5,7 +5,8 @@ import json
 import words
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from pyttsx3 import voice
+import pyttsx3 
+from skills import *
  
 q= queue.Queue()  
 
@@ -15,7 +16,7 @@ samplerate = int(sd.query_devices(device[0],'input')["default_samplerate"])
 
 model = vosk.Model("model_small")
 
-stop_flag =False
+
 def callback(indata,frames,time,status):
     q.put(bytes(indata))
 
@@ -41,10 +42,8 @@ def recognize(data,vectorizer,clf):
     #получение имени функции из ответа из data_set
     func_name = answer.split()[0]
 
-    #озвучка ответа из модели data_set
-
-    voice.Voice(answer.replace(func_name, ''))
-   # voice.speaker(answer.replace(func_name, ''))
+    #озвучка ответа из модели data_set    
+    speaker(answer.replace(func_name, ''))
 
     #запуск функции из skills
     exec(func_name + '()')    
@@ -54,15 +53,13 @@ def main():
     Обучаем матрицу ИИ
     и постоянно слушаем микрофон
     '''
-    global stop_flag   
-
+  
     #Обучение матрицы на data_set модели
     vectorizer =CountVectorizer()
     vectors = vectorizer.fit_transform(list(words.data_set.keys()))
 
     clf = LogisticRegression()
     clf.fit(vectors, list(words.data_set.values()))
-
     del words.data_set
 
 
