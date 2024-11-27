@@ -26,7 +26,7 @@ def browser():
 def offBot():
     sys.exit()
 
-def pasive():
+def passive():
     pass
 
 

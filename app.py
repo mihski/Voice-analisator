@@ -5,11 +5,9 @@ import json
 import words
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-import pyttsx3 
 from skills import *
  
 q= queue.Queue()  
-
 device = sd.default.device = 1, 3
 
 samplerate = int(sd.query_devices(device[0],'input')["default_samplerate"])
