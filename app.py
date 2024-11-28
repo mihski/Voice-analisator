@@ -51,6 +51,7 @@ def main():
     Обучаем матрицу ИИ
     и постоянно слушаем микрофон
     '''
+    print("БОТ ЗАПУЩЕН")
   
     #Обучение матрицы на data_set модели
     vectorizer =CountVectorizer()
@@ -65,10 +66,10 @@ def main():
                             channels=1,callback=callback):    
         rec= vosk.KaldiRecognizer(model,samplerate)
         while True:            
-            data = q.get()
+            data = q.get()          
             if rec.AcceptWaveform(data):                    
                 data = json.loads(rec.Result())["text"]
-            #    print(data)             
+                print("=> "+(data))             
                 recognize(data,vectorizer,clf)
                 
                 # if "стой" in data.lower():
