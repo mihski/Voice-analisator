@@ -1,4 +1,4 @@
-import os,sys,webbrowser,requests,pyttsx3,subprocess
+import os,sys,webbrowser,requests,pyttsx3,subprocess,re
 from pprint import pprint
 
 #иницилизация звук. движка:
@@ -29,7 +29,7 @@ def weather():
     city = "санкт петербург"
     code_smile = {'Clouds': "облачно \U00002601",
                     'Clear': "ясно \U00002600",
-                    "Snow": "снег \U00001f328",
+                    "Snow": "снег \U00001f32",
                     "Raine": "дождь \U00002614"
                     }
     try:
@@ -75,8 +75,10 @@ def weather():
         else:
             wd = "не знаю"
        # pprint(f" температура {temperature} градусов")
-        print(f'погода в городе :  {city}\nТемпература: {temperature} C, {wd}\nВетер: {wg},  {wind} m/c')
-        text_for_audio = "температура"+str(int(temperature))+ (wd)+"градусов"+"ветер"+ str(wg_voce)+ str(wind)+ "метров всекунду"
+        print(f'погода в городе :  {city}\nТемпература: {temperature} C, {wd}\nВетер: {wg},  {wind} m/c')       
+        print(wd)        
+        wd_cleaned = re.sub(r"[^\w\s]", "", wd).strip()# убираю символ осадков    
+        text_for_audio = "температура"+str(int(temperature)) +"градусов" +str(wd_cleaned)+"ветер"+ str(wg_voce)+ str(wind)+ "метров всекунду"
         speaker(text_for_audio)
 
     except Exception as ex:
