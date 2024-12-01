@@ -27,21 +27,26 @@ def recognize(data,vectorizer,clf):
     trg = words.TRIGGERS.intersection(data.split())
     if not trg:
         return
-    print("запуск")
+    print("погоняло услышано")
     #удаляем имя бота из текста
-    data.replace(list(trg)[0], '')
+    data=data.replace(list(trg)[0], '')
+    print(f"услышанный текст: {data}")
 
+    if not data:
+        print("Триггер услышан, но текст после него отсутствует. Ожидание нового ввода.")
+        return
     #получаем вектор полученного текста
     #сравниваем с вариантами, получая наиболее подходящий ответ
     text_vector = vectorizer.transform([data]).toarray()[0]
     answer = clf.predict([text_vector])[0]
-    print(answer)
+    print(f"answer  {answer}")
 
     #получение имени функции из ответа из data_set
     func_name = answer.split()[0]
 
     #озвучка ответа из модели data_set    
     speaker(answer.replace(func_name, ''))
+    print(f"answer  {answer}")
 
     #запуск функции из skills
     exec(func_name + '()')    
@@ -52,6 +57,7 @@ def main():
     и постоянно слушаем микрофон
     '''
     print("БОТ ЗАПУЩЕН")
+    speaker("бот запущен")
   
     #Обучение матрицы на data_set модели
     vectorizer =CountVectorizer()
@@ -61,20 +67,22 @@ def main():
     clf.fit(vectors, list(words.data_set.values()))
     del words.data_set
 
-
-    with sd.RawInputStream(samplerate=samplerate,blocksize=8000,device=device[0],dtype="int16",
+    with sd.RawInputStream(samplerate=samplerate,blocksize=44100,device=device[0],dtype="int16",
                             channels=1,callback=callback):    
         rec= vosk.KaldiRecognizer(model,samplerate)
         while True:            
             data = q.get()          
             if rec.AcceptWaveform(data):                    
                 data = json.loads(rec.Result())["text"]
+                if not data:
+                    continue
+
                 print("=> "+(data))             
                 recognize(data,vectorizer,clf)
                 
-                # if "стой" in data.lower():
-                #     print("Команда 'stop' получена. Завершение программы.")
-                #     stop_flag = True                     
+            # if "стой" in data.lower():
+            #     print("Команда 'stop' получена. Завершение программы.")
+            #     stop_flag = True                     
             # else:
             #     partial = rec.PartialResult()  # Промежуточный результат в формате JSON
             #     print(partial)    
