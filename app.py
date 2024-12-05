@@ -6,6 +6,7 @@ import words
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from skills import *
+from tts import speaker_m
  
 q= queue.Queue()  
 device = sd.default.device = 1, 3
@@ -45,7 +46,7 @@ def recognize(data,vectorizer,clf):
     func_name = answer.split()[0]
 
     #озвучка ответа из модели data_set    
-    speaker(answer.replace(func_name, ''))
+    speaker_m(answer.replace(func_name, ''))
     print(f"answer  {answer}")
 
     #запуск функции из skills
@@ -57,7 +58,7 @@ def main():
     и постоянно слушаем микрофон
     '''
     print("БОТ ЗАПУЩЕН")
-    speaker("бот запущен")
+    speaker_m("бот запущен")
   
     #Обучение матрицы на data_set модели
     vectorizer =CountVectorizer()
@@ -80,10 +81,7 @@ def main():
                 print("=> "+(data))             
                 recognize(data,vectorizer,clf)
                 
-            # if "стой" in data.lower():
-            #     print("Команда 'stop' получена. Завершение программы.")
-            #     stop_flag = True                     
-            # else:
+           
             #     partial = rec.PartialResult()  # Промежуточный результат в формате JSON
             #     print(partial)    
 

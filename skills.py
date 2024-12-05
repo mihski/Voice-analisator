@@ -1,5 +1,7 @@
 import os,sys,webbrowser,requests,pyttsx3,subprocess,re
 from pprint import pprint
+from tts import speaker_m
+from num2words import num2words
 
 #иницилизация звук. движка:
 
@@ -27,10 +29,11 @@ def offpc():
 def weather():
     open_weather_token = "9d215a832d490c71ce1544ee58aaf85e"
     city = "санкт петербург"
+    
     code_smile = {'Clouds': "облачно \U00002601",
                     'Clear': "ясно \U00002600",
                     "Snow": "снег \U00001f32",
-                    "Raine": "дождь \U00002614"
+                    "Rain": "дождь \U00002614"
                     }
     try:
         r = requests.get(
@@ -77,9 +80,13 @@ def weather():
        # pprint(f" температура {temperature} градусов")
         print(f'погода в городе :  {city}\nТемпература: {temperature} C, {wd}\nВетер: {wg},  {wind} m/c')       
         print(wd)        
-        wd_cleaned = re.sub(r"[^\w\s]", "", wd).strip()# убираю символ осадков    
-        text_for_audio = "температура"+str(int(temperature)) +"градусов" +str(wd_cleaned)+"ветер"+ str(wg_voce)+ str(wind)+ "метров всекунду"
-        speaker(text_for_audio)
+        wd_cleaned = re.sub(r"[^\w\s]", "", wd).strip()# убираю символ осадков         
+
+        text_for_audio = "температура "+ num2words(int(temperature),lang='ru') +" градусов "\
+                        +str(wd_cleaned)+" ветер "+ wg_voce +" "+ num2words(wind,lang='ru')+ " метров в секунду"
+        speaker_m(text_for_audio)
+        print(text_for_audio)
+       
 
     except Exception as ex:
         print(ex)
@@ -94,3 +101,4 @@ def offBot():
 
 def passive():
     pass
+weather()
