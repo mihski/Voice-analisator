@@ -14,8 +14,7 @@ def speaker(text):
         engine.say(text)
         engine.runAndWait()
     except Exception as  e:
-       print(f"Ошибка в speaker: {e}")
-    
+       print(f"Ошибка в speaker: {e}")   
 
 
 
@@ -51,19 +50,19 @@ def weather():
             wg_voce= "север"
         elif 22 < wind_gradient <= 67:
             wg = "СВ"
-            wg_voce= "северовосток"
+            wg_voce= "северо восток"
         elif 67 < wind_gradient <= 112:
             wg = "В"
             wg_voce= "восток"
         elif 112 < wind_gradient <= 157:
             wg = "ЮВ"
-            wg_voce= "юговосток"            
+            wg_voce= "юго восток"            
         elif 157 < wind_gradient <= 202:
             wg = "Ю"
             wg_voce= "юг"
         elif 202 < wind_gradient <= 247:
             wg = "ЮЗ"
-            wg_voce= "югозапад"
+            wg_voce= "юго запад"
         elif 247 < wind_gradient <= 292:
             wg = "З"
             wg_voce= "запад"
@@ -77,17 +76,15 @@ def weather():
             wd = code_smile[weather_description]
         else:
             wd = "не знаю"
-       # pprint(f" температура {temperature} градусов")
-        print(f'погода в городе :  {city}\nТемпература: {temperature} C, {wd}\nВетер: {wg},  {wind} m/c')       
-        print(wd)        
-        wd_cleaned = re.sub(r"[^\w\s]", "", wd).strip()# убираю символ осадков         
-
-        text_for_audio = "температура "+ num2words(int(temperature),lang='ru') +" градусов "\
-                        +str(wd_cleaned)+" ветер "+ wg_voce +" "+ num2words(wind,lang='ru')+ " метров в секунду"
-        speaker_m(text_for_audio)
-        print(text_for_audio)
        
-
+        print(f'погода в городе :  {city}\nТемпература: {temperature} C \n{wd}\nВетер: {wg},{wind} m/c' )       
+              
+        wd_cleaned = re.sub(r"[^\w\s]", "", wd).strip()# убираю символ осадков         
+        text_for_audio=(f"температура {num2words(temperature,lang='ru')} градусов {wd_cleaned} ветер \
+                {wg_voce},{num2words(wind,lang='ru')} метров в секунду ")
+    #    print(text_for_audio)
+        speaker_m(text_for_audio)  
+              
     except Exception as ex:
         print(ex)
         print("проверьте назание города")
@@ -101,4 +98,3 @@ def offBot():
 
 def passive():
     pass
-weather()

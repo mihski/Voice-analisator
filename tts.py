@@ -6,7 +6,7 @@ import num2words
 
 
 language="ru"
-model_id = "ru_v3"
+model_id = "v4_ru"
 sample_rate =48000
 speaker = "baya"
 put_accent = True
@@ -30,7 +30,7 @@ def speaker_m(text):
                             sample_rate=sample_rate,)                        
     print(text)                        
 
-    sd.play(audio, sample_rate )
+    sd.play(audio, sample_rate* 1.05 )
     time.sleep((len(audio) / sample_rate + 1))
     sd.stop()
 

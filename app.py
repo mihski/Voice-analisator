@@ -1,5 +1,6 @@
 import queue
-import sounddevice as sd  
+import sounddevice as sd
+from sympy import im  
 import vosk
 import json
 import words
@@ -11,8 +12,8 @@ from tts import speaker_m
 q= queue.Queue()  
 device = sd.default.device = 1, 3
 
-samplerate = int(sd.query_devices(device[0],'input')["default_samplerate"])
-
+#samplerate = int(sd.query_devices(device[0],'input')["default_samplerate"])
+samplerate =16000
 model = vosk.Model("model_small")
 
 
@@ -81,7 +82,10 @@ def main():
                 print("=> "+(data))             
                 recognize(data,vectorizer,clf)
                 
-           
+            # if "стой" in data.lower():
+            #     print("Команда 'stop' получена. Завершение программы.")
+            #     stop_flag = True                     
+            # else:
             #     partial = rec.PartialResult()  # Промежуточный результат в формате JSON
             #     print(partial)    
 
