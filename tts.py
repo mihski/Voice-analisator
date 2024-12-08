@@ -8,10 +8,10 @@ import num2words
 language="ru"
 model_id = "v4_ru"
 sample_rate =48000
-speaker = "baya"
+speaker = "xenia" #  aidar kseniya, xenia, eugene, random
 put_accent = True
 put_yo = True
-text = "привет "
+text = "да,сэр "
 device  = torch.device("cpu")
 
 
@@ -33,6 +33,8 @@ def speaker_m(text):
     sd.play(audio, sample_rate* 1.05 )
     time.sleep((len(audio) / sample_rate + 1))
     sd.stop()
+if __name__=="__main__":
+    speaker_m(text)    
 
 
 # sd.play(audio, sample_rate)

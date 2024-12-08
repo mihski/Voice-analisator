@@ -8,7 +8,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from skills import *
 from tts import speaker_m
- 
+
 q= queue.Queue()  
 device = sd.default.device = 1, 3
 
@@ -25,18 +25,7 @@ def recognize(data,vectorizer,clf):
     Анализ распознанной речи
     '''
 
-    #проверяем есть ли имя бота в data, если нет, то return
-    trg = words.TRIGGERS.intersection(data.split())
-    if not trg:
-        return
-    print("погоняло услышано")
-    #удаляем имя бота из текста
-    data=data.replace(list(trg)[0], '')
-    print(f"услышанный текст: {data}")
-
-    if not data:
-        print("Триггер услышан, но текст после него отсутствует. Ожидание нового ввода.")
-        return
+    
     #получаем вектор полученного текста
     #сравниваем с вариантами, получая наиболее подходящий ответ
     text_vector = vectorizer.transform([data]).toarray()[0]
@@ -81,11 +70,6 @@ def main():
 
                 print("=> "+(data))             
                 recognize(data,vectorizer,clf)
-                
-         
-            else:
-                partial = rec.PartialResult()  # Промежуточный результат в формате JSON
-                print(partial)    
 
 if __name__=="__main__":
     main()
