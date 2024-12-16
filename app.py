@@ -38,13 +38,13 @@ def recognize(data,vectorizer,clf):
         return
     #получаем вектор полученного текста
     #сравниваем с вариантами, получая наиболее подходящий ответ
-    text_vector = vectorizer.transform([data]).toarray()[0]
+    text_vector = vectorizer.transform([data]).toarray()
 
     # Предсказание вероятностей принадлежности к каждому классу
     predicted_probabilities = clf.predict_proba(text_vector)
 
     # Задание порога совпадения
-    threshold = 0.2
+    threshold = 0.1
 
     # Поиск наибольшей вероятности и выбор ответа, если он превышает порог
     max_probability = max(predicted_probabilities[0])
@@ -58,8 +58,7 @@ def recognize(data,vectorizer,clf):
 
 
 
-
-    answer = clf.predict([text_vector])[0]
+    answer = clf.predict([text_vector])
     print(f"answer  {answer}")
 
     #получение имени функции из ответа из data_set
