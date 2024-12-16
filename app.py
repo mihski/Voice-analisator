@@ -24,18 +24,18 @@ def recognize(data,vectorizer,clf):
     Анализ распознанной речи
     '''
 
-    #проверяем есть ли имя бота в data, если нет, то return
-    trg = words.TRIGGERS.intersection(data.split())
-    if not trg:
-        return
-    print("погоняло услышано")
-    #удаляем имя бота из текста
-    data=data.replace(list(trg)[0], '')
-    print(f"услышанный текст: {data}")
+    # #проверяем есть ли имя бота в data, если нет, то return
+    # trg = words.TRIGGERS.intersection(data.split())
+    # if not trg:
+    #     return
+    # print("погоняло услышано")
+    # #удаляем имя бота из текста
+    # data=data.replace(list(trg)[0], '')
+    # print(f"услышанный текст: {data}")
 
-    if not data:
-        print("Триггер услышан, но текст после него отсутствует. Ожидание нового ввода.")
-        return
+    # if not data:
+    #     print("Триггер услышан, но текст после него отсутствует. Ожидание нового ввода.")
+    #     return
     #получаем вектор полученного текста
     #сравниваем с вариантами, получая наиболее подходящий ответ
     text_vector = vectorizer.transform([data]).toarray()
@@ -55,11 +55,13 @@ def recognize(data,vectorizer,clf):
     else:
         speaker("Команда не распознана")
         return
-
-
-
-    answer = clf.predict([text_vector])
+    print(text_vector.shape)
+    answer = clf.predict(text_vector)
     print(f"answer  {answer}")
+    print(type(answer))
+    answer=answer[0]
+    print(type(answer))
+
 
     #получение имени функции из ответа из data_set
     func_name = answer.split()[0]
