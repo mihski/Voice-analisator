@@ -1,9 +1,10 @@
 from pvrecorder import PvRecorder
 import pvporcupine
 import os
+import sys
 from playsound import playsound
 import app
-#import asis
+import time
 import numpy as np
 
 devices = PvRecorder.get_available_devices()
@@ -17,42 +18,41 @@ for i, device in enumerate(devices):
 # else:
 #     print("файл найден")
 
-porcupine= pvporcupine.create(access_key="X90Q/wuy7KB5VPHxFtsbGcdPuCaDZdX4Jwp8n0bGfnCXw3syOuRvnA==",                               
-                                keywords=["jarvis","alexa"]
-                                )
+def listenTriger():
 
-recorder = PvRecorder(device_index= -1 ,frame_length=porcupine.frame_length)
-recorder.start()
+    porcupine= pvporcupine.create(access_key="X90Q/wuy7KB5VPHxFtsbGcdPuCaDZdX4Jwp8n0bGfnCXw3syOuRvnA==",                               
+                                    keywords=["jarvis","alexa"]
+                                    )
 
-count=0
-try:   
-    while True: 
-        voice = recorder.read() 
-        count+=1
-        if count % 100 == 0:
-            print(int(count/100), end=' ',flush=True)    
-            audio_data = np.array(voice, dtype=np.int16)  # Конвертация данных в массив
-            print(f"Min: {audio_data.min()}, Max: {audio_data.max()}")
+    recorder = PvRecorder(device_index= -1 ,frame_length=porcupine.frame_length)
+    recorder.start()
+    count=0
+    try:   
+        while True: 
+            voice = recorder.read() 
+            count+=1
+            if count % 100 == 0:
+                print(int(count/100), end=' ',flush=True)   
+                
+                audio_data = np.array(voice, dtype=np.int16)  # Конвертация данных в массив
+                print(f"Min: {audio_data.min()}, Max: {audio_data.max()}")   
+            
+            keyord_index  = porcupine.process(voice)          
+            
+            if keyord_index>=0:
+                print("погоняло услышано")
+                recorder.stop()
+                print("мicr. off")
+                playsound("./voices/jiglov-moya-familiya.wav")
+                recorder.start()
+                print("мicr. on")            
 
-   
-        # voice = recorder.read()    
-
-        # audio_data = np.array(voice, dtype=np.int16)  # Конвертация данных в массив
-        # print(f"Min: {audio_data.min()}, Max: {audio_data.max()}")
-
-
-        keyord_index  = porcupine.process(voice)          
-         
-        if keyord_index>=0:
-            print("погоняло услышано")
-            recorder.stop()
-            print("мicr. off")
-            playsound("./voices/jiglov-moya-familiya.wav")
-            recorder.start()
-            print("мicr. on")
-            app.main()
-            break
-              
-              
-except KeyboardInterrupt:
-     print("Stopped by user.")
+                app.main()
+                break             
+                
+    except KeyboardInterrupt:
+        print("Stopped by user.")
+        sys.exit(0)
+        
+if __name__=="__main__":  
+    listenTriger()        

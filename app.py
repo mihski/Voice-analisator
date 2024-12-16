@@ -7,6 +7,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from skills import *
 import openai
+
+import time
  
 q= queue.Queue()  
 device = sd.default.device = 1, 3
@@ -17,25 +19,15 @@ model = vosk.Model("model_small")
 
 
 def callback(indata,frames,time,status):
-    q.put(bytes(indata))
+    q.put(bytes(indata))    
 
+    
 def recognize(data,vectorizer,clf):
+   
     '''
-    Анализ распознанной речи
-    '''
-
-    # #проверяем есть ли имя бота в data, если нет, то return
-    # trg = words.TRIGGERS.intersection(data.split())
-    # if not trg:
-    #     return
-    # print("погоняло услышано")
-    # #удаляем имя бота из текста
-    # data=data.replace(list(trg)[0], '')
-    # print(f"услышанный текст: {data}")
-
-    # if not data:
-    #     print("Триггер услышан, но текст после него отсутствует. Ожидание нового ввода.")
-    #     return
+    Анализ распознанной речи    '''
+    
+   
     #получаем вектор полученного текста
     #сравниваем с вариантами, получая наиболее подходящий ответ
     text_vector = vectorizer.transform([data]).toarray()
@@ -52,10 +44,11 @@ def recognize(data,vectorizer,clf):
 
     if max_probability >= threshold:
         answer = clf.classes_[predicted_probabilities[0].argmax()]
-    else:
-        speaker("Команда не распознана")
+    else:        
+        speaker("Команда не распознана")    
+             
         return
-    print(text_vector.shape)
+    
     answer = clf.predict(text_vector)
     print(f"answer  {answer}")
     print(type(answer))
@@ -78,7 +71,10 @@ def main():
     Обучаем матрицу ИИ
     и постоянно слушаем микрофон
     '''
+    
     print("БОТ ЗАПУЩЕН")
+    t_0 =time.time()
+    print(int(t_0))   
     speaker("бот запущен")
   
     #Обучение матрицы на data_set модели
@@ -87,19 +83,27 @@ def main():
 
     clf = LogisticRegression()
     clf.fit(vectors, list(words.data_set.values()))
-    del words.data_set
+#    del words.data_set
 
     with sd.RawInputStream(samplerate=samplerate,blocksize=44100,device=device[0],dtype="int16",
                             channels=1,callback=callback):    
         rec= vosk.KaldiRecognizer(model,samplerate)
         while True:            
-            data = q.get()          
+            data = q.get()   
+            current_time = time.time() 
+            if  current_time -t_0>=10:
+                print(f"{int(current_time -t_0)} сек")
+                from  coll_jarvis import listenTriger
+                listenTriger()
+
+
             if rec.AcceptWaveform(data):                    
                 data = json.loads(rec.Result())["text"]
                 if not data:
                     continue
 
-                print("=> "+(data))             
+                print("=> "+(data))  
+                        
                 recognize(data,vectorizer,clf)
                 
             # if "стой" in data.lower():
@@ -108,6 +112,6 @@ def main():
             # else:
             #     partial = rec.PartialResult()  # Промежуточный результат в формате JSON
             #     print(partial)    
-
+    return t_0
 if __name__=="__main__":
     main()
