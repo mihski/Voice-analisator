@@ -6,7 +6,7 @@ import words
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from skills import *
-import openai
+
 
 import time
  
@@ -93,7 +93,7 @@ def main():
             current_time = time.time() 
             if  current_time -t_0>=10:
                 print(f"{int(current_time -t_0)} сек")
-                from  coll_jarvis import listenTriger
+                from  call_jarvis import listenTriger
                 listenTriger()
 
 
