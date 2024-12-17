@@ -45,8 +45,7 @@ def recognize(data,vectorizer,clf):
     if max_probability >= threshold:
         answer = clf.classes_[predicted_probabilities[0].argmax()]
     else:        
-        speaker("Команда не распознана")    
-             
+        speaker("Команда не распознана")                 
         return
     
     answer = clf.predict(text_vector)
@@ -64,8 +63,9 @@ def recognize(data,vectorizer,clf):
     print(f"answer  {answer}")
 
     #запуск функции из skills
-    exec(func_name + '()')    
-
+    exec(func_name + '()')
+   
+ 
 def main():
     '''
     Обучаем матрицу ИИ
@@ -91,10 +91,10 @@ def main():
         while True:            
             data = q.get()   
             current_time = time.time() 
-            if  current_time -t_0>=10:
+            if  current_time -t_0>=20:
                 print(f"{int(current_time -t_0)} сек")
-                from  call_jarvis import listenTriger
-                listenTriger()
+                speaker(" я ухожу")
+                break               
 
 
             if rec.AcceptWaveform(data):                    
@@ -102,9 +102,11 @@ def main():
                 if not data:
                     continue
 
-                print("=> "+(data))  
-                        
+                print("=> "+(data))                          
                 recognize(data,vectorizer,clf)
+
+        from  call_jarvis import listenTriger
+        listenTriger()        
                 
             # if "стой" in data.lower():
             #     print("Команда 'stop' получена. Завершение программы.")

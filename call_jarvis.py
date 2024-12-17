@@ -18,12 +18,17 @@ for i, device in enumerate(devices):
 # else:
 #     print("файл найден")
 
-def listenTriger():
+def play_sound_safe(file_path):
+    try:
+        playsound(file_path)
+        time.sleep(0.5)  #  пауза для освобождения ресурсов
+    except Exception as e:
+        print(f"Ошибка при воспроизведении: {e}")
 
+def listenTriger():
     porcupine= pvporcupine.create(access_key="X90Q/wuy7KB5VPHxFtsbGcdPuCaDZdX4Jwp8n0bGfnCXw3syOuRvnA==",                               
                                     keywords=["jarvis","alexa"]
                                     )
-
     recorder = PvRecorder(device_index= -1 ,frame_length=porcupine.frame_length)
     recorder.start()
     count=0
@@ -38,12 +43,12 @@ def listenTriger():
                 print(f"Min: {audio_data.min()}, Max: {audio_data.max()}")   
             
             keyord_index  = porcupine.process(voice)          
-            
+            keyord_index =1
             if keyord_index>=0:
                 print("погоняло услышано")
                 recorder.stop()
                 print("мicr. off")
-                playsound("./voices/jiglov-moya-familiya.wav")
+                play_sound_safe("./voices/jiglov-moya-familiya.wav")
                 recorder.start()
                 print("мicr. on")            
 
